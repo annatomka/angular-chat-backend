@@ -1,32 +1,65 @@
 var express = require('express');
 var app = module.exports = express();
+var User = require('./model');
 
-app.get('/', function(req, res) {
-    res.json({
-        message: 'List users'
-    });
+app.get('/', function (req, res, next) {
+  User.find().exec(function (err, users) {
+    if (err) {
+      return next(err);
+    }
+    res.json(users);
+  });
 });
 
-app.post('/', function(req, res) {
-    res.json({
-        message: 'Create new user: ' + req.params.userId
-    });
+app.post('/', function (req, res, next) {
+  var user = new User({
+    username: req.body.username,
+    password: req.body.password,
+    firstName: req.body.firstName,
+    lastName: req.body.lastName,
+    imageUrl: req.body.imageUrl
+  });
+  user.save(function (err, saveEntity) {
+    if (err) {
+      return next(err);
+    }
+    res.json(saveEntity);
+  });
 });
 
-app.get('/:userId', function(req, res) {
-    res.json({
-        message: 'Get User by Id: ' + req.params.userId
-    });
+app.get('/:userId', function (req, res, next) {
+  User.findById(req.params.userId, function (err, user) {
+    if (err) {
+      return next(err);
+    }
+    res.json(user);
+  });
 });
 
-app.put('/:userId', function(req, res) {
-   res.json({
-       message: 'Update User by id: ' + req.params.userId
-   });
+app.put('/:userId', function (req, res, next) {
+  User.findByIdAndUpdate(req.params.userId, {
+      $set: {
+        username: req.body.username,
+        password: req.body.password,
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        imageUrl: req.body.imageUrl
+      }
+    }, {new: true}, function (err, user) {
+      if (err) {
+        return next(err);
+      }
+      res.json(user);
+    }
+  );
 });
 
-app.delete('/:userId', function(req, res) {
-    res.json({
-        message: 'Delete User by id: ' + req.params.userId
-    });
+app.delete('/:userId', function (req, res, next) {
+  User.findByIdAndRemove(req.params.userId, function (err, result) {
+      if (err) {
+        return next(err);
+      }
+      res.json(result);
+    }
+  );
 });
