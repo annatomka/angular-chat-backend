@@ -3,6 +3,8 @@ var app = module.exports = express();
 var Room = require('./model');
 var Auth = require('../auth');
 
+app.use('/:roomId/users', require('./users'));
+
 app.get('/', function (req, res, next) {
   Room.find().exec(function (err, rooms) {
     if (err) {
@@ -42,11 +44,11 @@ app.put('/:roomId', Auth.isAuthenticated, function (req, res, next) {
     $set: {
       name: req.body.name
     }
-  }, {new: true}, function (err, user) {
+  }, {new: true}, function (err, room) {
     if (err) {
       return next(err);
     }
-    res.json(user);
+    res.json(room);
   });
 });
 
