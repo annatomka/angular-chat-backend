@@ -18,7 +18,7 @@ app.get('/', function (req, res, next) {
   });
 });
 
-app.put('/', Auth.isAuthenticated, function (req, res, next) {
+app.post('/', Auth.isAuthenticated, function (req, res, next) {
   Room.findByIdAndUpdate(req.params.roomId, {
     $addToSet: {
       users: req.body.users

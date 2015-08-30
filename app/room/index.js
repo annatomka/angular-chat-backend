@@ -4,6 +4,7 @@ var Room = require('./model');
 var Auth = require('../auth');
 
 app.use('/:roomId/users', require('./users'));
+app.use('/:roomId/messages', require('./messages'));
 
 app.get('/', function (req, res, next) {
   Room.find().exec(function (err, rooms) {
