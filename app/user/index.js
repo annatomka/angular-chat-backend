@@ -19,11 +19,11 @@ app.post('/', function (req, res, next) {
     lastName: req.body.lastName,
     imageUrl: req.body.imageUrl
   });
-  user.save(function (err, saveEntity) {
+  user.save(function (err, savedEntity) {
     if (err) {
       return next(err);
     }
-    res.json(saveEntity);
+    res.json(savedEntity);
   });
 });
 
@@ -38,28 +38,26 @@ app.get('/:userId', function (req, res, next) {
 
 app.put('/:userId', function (req, res, next) {
   User.findByIdAndUpdate(req.params.userId, {
-      $set: {
-        username: req.body.username,
-        password: req.body.password,
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        imageUrl: req.body.imageUrl
-      }
-    }, {new: true}, function (err, user) {
-      if (err) {
-        return next(err);
-      }
-      res.json(user);
+    $set: {
+      username: req.body.username,
+      password: req.body.password,
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      imageUrl: req.body.imageUrl
     }
-  );
+  }, {new: true}, function (err, user) {
+    if (err) {
+      return next(err);
+    }
+    res.json(user);
+  });
 });
 
 app.delete('/:userId', function (req, res, next) {
   User.findByIdAndRemove(req.params.userId, function (err, result) {
-      if (err) {
-        return next(err);
-      }
-      res.json(result);
+    if (err) {
+      return next(err);
     }
-  );
+    res.json(result);
+  });
 });

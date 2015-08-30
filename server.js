@@ -4,8 +4,11 @@ var bodyParser = require('body-parser');
 var config = require('./config');
 var mongoose = require('mongoose');
 
+var passport = require('passport');
+
 mongoose.connect(config.mongoUri);
 app.use(bodyParser.json());
+app.use(passport.initialize());
 
 var api = require('./app');
 app.use('/api/v1/', api);

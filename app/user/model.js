@@ -16,6 +16,10 @@ var userSchema = new Schema({
   imageUrl: String
 });
 
+userSchema.methods.verifyPassword = function(password, cb) {
+  cb(null, password === this.password);
+};
+
 var Model = mongoose.model('User', userSchema);
 
 module.exports = Model;
