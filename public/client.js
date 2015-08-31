@@ -1,5 +1,15 @@
 (function () {
-  var apiDomain = 'http://localhost:8080';
+  var apiDomain;
+
+  if (document.domain === 'localhost') {
+    apiDomain = 'http://localhost:8080';
+  }
+
+  // support staging
+  if (document.domain === 'express-js-chat-demo-complete.herokuapp.com') {
+    apiDomain = 'https://express-js-chat-demo-complete.herokuapp.com';
+  }
+
   var chatClient = angular.module('simple-chat-client', []);
   chatClient.constant('API_DOMAIN', apiDomain);
   chatClient.constant('API_URL', apiDomain + '/api/v1');
