@@ -1,6 +1,6 @@
 var express = require('express');
 var app = module.exports = express();
-var User = require('../user/model');
+var User = require('../users/model');
 var Auth = require('../auth');
 
 app.get('/me', Auth.isAuthenticated, function (req, res, next) {

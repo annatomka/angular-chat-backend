@@ -9,8 +9,8 @@ app.get('/', function(req, res) {
 });
 
 app.use('/account', require('./account'));
-app.use('/user', require('./user'));
-app.use('/room', require('./room'));
+app.use('/users', require('./users'));
+app.use('/rooms', require('./rooms'));
 
 //Mongoose validation error handler middleware
 app.use(function(err, req, res, next) {

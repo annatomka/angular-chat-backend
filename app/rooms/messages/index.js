@@ -3,6 +3,7 @@ var app = module.exports = express.Router({mergeParams: true});
 var Room = require('../model');
 var Message = require('./model');
 var Auth = require('../../auth');
+var server = require('../../../server');
 
 app.get('/', function (req, res, next) {
   Message.find({roomId: req.params.roomId})
@@ -21,6 +22,7 @@ app.post('/', Auth.isAuthenticated, function (req, res, next) {
     if (err) {
       return next(err);
     }
+    server.socketIO.in(message.roomId).emit('new message', message);
     res.json(message);
   });
 });
@@ -33,6 +35,7 @@ app.delete('/:messageId', Auth.isAuthenticated, function (req, res, next) {
     if (err) {
       return next(err);
     }
+    server.socketIO.in(req.params.roomId).emit('message removed', { messageId: req.params.messageId});
     res.json(message);
   });
 });
