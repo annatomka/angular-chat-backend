@@ -11,6 +11,15 @@ mongoose.connect(config.mongoUri);
 app.use(bodyParser.json());
 app.use(passport.initialize());
 
+//CORS
+
+app.all('/*', function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "X-Requested-With");
+  res.header("Access-Control-Allow-Headers", "Authorization");
+  next();
+});
+
 //API
 var api = require('./app');
 app.use('/api/v1/', api);
