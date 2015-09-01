@@ -1,23 +1,21 @@
-var http = require('http');
 var express = require('express');
 var app = module.exports.app = express();
+var http = require('http');
 var bodyParser = require('body-parser');
-var config = require('./config');
 var mongoose = require('mongoose');
-
 var passport = require('passport');
+var config = require('./config');
 
 mongoose.connect(config.mongoUri);
 app.use(bodyParser.json());
 app.use(passport.initialize());
 
-//API
 var api = require('./app');
 app.use('/api/v1/', api);
-
 app.use(express.static('public'));
 
 var server = http.createServer(app);
+
 var io = module.exports.socketIO = require('socket.io').listen(server);
 io.on('connection', function (socket) {
   console.log('User connected');
