@@ -22,6 +22,7 @@ app.post('/', Auth.isAuthenticated, function (req, res, next) {
     if (err) {
       return next(err);
     }
+    console.log("message["+message+"] emitted to room: ",message.roomId)
     server.socketIO.in(message.roomId).emit('new message', message);
     res.json(message);
   });

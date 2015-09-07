@@ -64,6 +64,7 @@
       if(socket) {
         socket.disconnect();
       }
+      console.log(API_DOMAIN)
       socket = io.connect(API_DOMAIN);
       socket.emit("subscribe", { room: $scope.roomId });
       socket.on('new message', function(message) {

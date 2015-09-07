@@ -5,6 +5,7 @@ var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var passport = require('passport');
 var config = require('./config');
+var Room = require('app/rooms/model');
 
 mongoose.connect(config.mongoUri);
 app.use(bodyParser.json());
@@ -14,8 +15,7 @@ app.use(passport.initialize());
 
 app.all('/*', function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "X-Requested-With");
-  res.header("Access-Control-Allow-Headers", "Authorization");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept,Authorization");
   next();
 });
 
@@ -33,6 +33,12 @@ io.on('connection', function (socket) {
   });
   socket.on('subscribe', function(data) {
     socket.join(data.room);
+    Room.findByIdAndUpdate(data.room, {
+      $addToSet: {
+        users: data.users
+      }
+    });
+    socket.emit("update","new person is online in the room");
     console.log('User joined to room:' + data.room);
   });
   socket.on('unsubscribe', function(data) {
