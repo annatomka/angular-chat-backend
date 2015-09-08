@@ -5,7 +5,6 @@ var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var passport = require('passport');
 var config = require('./config');
-var Room = require('app/rooms/model');
 
 mongoose.connect(config.mongoUri);
 app.use(bodyParser.json());
@@ -24,7 +23,7 @@ app.use('/api/v1/', api);
 app.use(express.static('public'));
 
 var server = http.createServer(app);
-
+var Room = require('./app/rooms/model');
 var io = module.exports.socketIO = require('socket.io').listen(server);
 io.on('connection', function (socket) {
   console.log('User connected');
@@ -33,17 +32,26 @@ io.on('connection', function (socket) {
   });
   socket.on('subscribe', function(data) {
     socket.join(data.room);
+    console.log("users: " + data.user)
     Room.findByIdAndUpdate(data.room, {
       $addToSet: {
-        users: data.users
+        users: [data.user]
       }
     });
-    socket.emit("update","new person is online in the room");
+    socket.in(data.room).emit("user.joined",data.user);
+    //socket.in(data.room).emit("update.user",data.user);
     console.log('User joined to room:' + data.room);
+
   });
   socket.on('unsubscribe', function(data) {
     socket.leave(data.room);
+    socket.in(data.room).emit("user.left",data.user);
     console.log('User left room:' + data.room);
+    Room.findByIdAndUpdate(data.room, {
+      $pull: {
+        users: data.user
+      }
+    },{new: true});
   });
 });
 
