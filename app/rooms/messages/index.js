@@ -7,13 +7,14 @@ var server = require('../../../server');
 
 app.get('/', function (req, res, next) {
   Message.find({roomId: req.params.roomId})
-    .sort({_id: -1})
+    .sort({_id: 1})
     .exec(function (err, messages) {
       res.json(messages);
     });
 });
 
 app.post('/', Auth.isAuthenticated, function (req, res, next) {
+  console.log("user of message: "+ req.user._id)
   Message.create({
     text: req.body.text,
     roomId: req.params.roomId,

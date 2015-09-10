@@ -32,13 +32,18 @@ io.on('connection', function (socket) {
   });
   socket.on('subscribe', function(data) {
     socket.join(data.room);
-    console.log("users: " + data.user)
+    console.log("users: " + data.user.username)
     Room.findByIdAndUpdate(data.room, {
       $addToSet: {
-        users: [data.user]
+        users: [data.user._id]
       }
+    },{new: true}, function(err, room) {
+      if (err) {
+       console.log("error: "+ err)
+      }
+      console.log("user room connection created successfully")
     });
-    socket.in(data.room).emit("user.joined",data.user);
+    io.in(data.room).emit("user.joined",data.user);
     //socket.in(data.room).emit("update.user",data.user);
     console.log('User joined to room:' + data.room);
 
@@ -49,9 +54,14 @@ io.on('connection', function (socket) {
     console.log('User left room:' + data.room);
     Room.findByIdAndUpdate(data.room, {
       $pull: {
-        users: data.user
+        users: [data.user._id]
       }
-    },{new: true});
+    }, {new: true}, function(err, room) {
+      if (err) {
+        console.log(err)
+      }
+      console.log("user room connection deleted successfully")
+    });
   });
 });
 
